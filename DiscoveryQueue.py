@@ -1,5 +1,3 @@
-from time import sleep
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -17,20 +15,22 @@ class DiscoveryQueue:
 
         first = self.class_name("discovery_queue_overlay_bg")
         second = self.id_name("refresh_queue_btn")
-        if first is None:
-            second.click()
-        else:
-            first.click()
-        self.wait_for_load()
 
-        for _ in range(3):
-            next_queue = self.class_name("next_in_queue_content")
-            while next_queue is not None:
-                next_queue.click()
-                self.wait_for_load()
-                next_queue = self.class_name("next_in_queue_content")
-            self.id_name("refresh_queue_btn").click()
+        try:
+            first.click()
+        except:
+            second.click()
+
+        self.do_queue()
+
+    def do_queue(self):
+        next_queue = self.class_name("next_in_queue_content")
+        while next_queue is not None:
+            next_queue.click()
             self.wait_for_load()
+            next_queue = self.class_name("next_in_queue_content")
+        self.id_name("refresh_queue_btn").click()
+        self.wait_for_load(time=3)
 
     def class_name(self, el):
         try:
@@ -44,7 +44,12 @@ class DiscoveryQueue:
         except:
             return None
 
-    def wait_for_load(self):
-        WebDriverWait(self.browser, 1).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "miniprofile_hover"))
-        )
+    def wait_for_load(self, el="responsive_page", time=1.5):
+        try:
+            WebDriverWait(self.browser, time).until(
+                EC.presence_of_element_located((By.CLASS_NAME, el))
+            )
+        except:
+            WebDriverWait(self.browser, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, el))
+            )

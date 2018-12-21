@@ -20,8 +20,12 @@ class AccountManager:
         self.accounts = out
 
     def start(self):
-        if self.logger.login(self.accounts[0][0], self.accounts[0][1]):
-            print(f"Login success {self.accounts[0][0]}")
-            self.queue.start()
-        else:
-            print(f"Login error {self.accounts[0][0]}")
+        for acc in self.accounts:
+            if self.logger.login(acc[0], acc[1]):
+                print(f"Login success {acc[0]}")
+                for x in range(5):
+                    self.queue.start()
+                self.logger.logout()
+            else:
+                print(f"Login error {acc[0]}")
+            print("----------------------------")

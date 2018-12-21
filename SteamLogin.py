@@ -25,17 +25,23 @@ class SteamLogin:
         if self.check_two_factor():
             steam_guard = input("Please enter your 2FA code: ")
             steam_guard_input = self.browser.find_element_by_id("twofactorcode_entry")
-            steam_guard_input.send_keys(steam_guard)
+            steam_guard_input.send_keys(steam_guard.upper())
             sg_button = self.browser.find_elements_by_xpath("//div[@id='login_twofactorauth_buttonset_entercode']/div[@type='submit']")
             sg_button[0].click()
 
-        sleep(5.0)
+        sleep(2.0)
         return True
 
     def check_captcha(self):
         return len(self.browser.find_element_by_id("captchaExplanation").text) > 0
 
     def check_two_factor(self):
-        steam_guard = self.browser.find_element_by_id("login_twofactorauth_icon")
-        return len(str(steam_guard)) > 0
+        try:
+            steam_guard = self.browser.find_element_by_id("login_twofactorauth_icon")
+            return len(str(steam_guard)) > 0
+        except:
+            return False
 
+    def logout(self):
+        self.browser.find_element_by_id("account_pulldown").click()
+        self.browser.find_elements_by_xpath("//div[@id='account_dropdown']/div/a[@href='javascript:Logout();']")[0].click()
