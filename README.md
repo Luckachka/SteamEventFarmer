@@ -2,6 +2,9 @@
 
 This bot will go in your discovery queue and farm all the event cards you can get.
 
+## Notice
+The .exe is the chromium driver for selenium if you dont trust it download the driver yourself
+
 ## How to use
 Create an account.txt in the same directory as main.py
 
