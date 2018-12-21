@@ -1,10 +1,12 @@
 from SteamLogin import SteamLogin
+from DiscoveryQueue import DiscoveryQueue
 
 
 class AccountManager:
     def __init__(self, browser, account_file):
         self.browser = browser
         self.logger = SteamLogin(browser)
+        self.queue = DiscoveryQueue(browser)
         self.accounts = []
 
         self.get_accounts_from_file(account_file)
@@ -18,4 +20,8 @@ class AccountManager:
         self.accounts = out
 
     def start(self):
-        self.logger.login(self.accounts[0][0], self.accounts[0][1])
+        if self.logger.login(self.accounts[0][0], self.accounts[0][1]):
+            print(f"Login success {self.accounts[0][0]}")
+            self.queue.start()
+        else:
+            print(f"Login error {self.accounts[0][0]}")

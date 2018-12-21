@@ -31,7 +31,18 @@ class SteamLogin:
                 print(f"The password {password} for user {user} is wrong.")
             elif error_code == 0xE02:
                 print("Try again later.")
-            return
+            return False
+
+        sleep(2.0)
+        if self.check_two_factor():
+            steam_guard = input("Please enter your 2FA code: ")
+            steam_guard_input = self.browser.find_element_by_id("twofactorcode_entry")
+            steam_guard_input.send_keys(steam_guard)
+            sg_button = self.browser.find_elements_by_xpath("//div[@id='login_twofactorauth_buttonset_entercode']/div[@type='submit']")
+            sg_button[0].click()
+
+        sleep(5.0)
+        return True
 
     def login_status(self):
         res = self.browser.find_element_by_id("error_display").text
@@ -43,3 +54,8 @@ class SteamLogin:
 
     def check_captcha(self):
         return len(self.browser.find_element_by_id("captchaExplanation").text) > 0
+
+    def check_two_factor(self):
+        steam_guard = self.browser.find_element_by_id("login_twofactorauth_icon")
+        return len(str(steam_guard)) > 0
+
